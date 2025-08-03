@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIJILL Home</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the full black theme */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000; /* Full black background */
+            color: #ffffff; /* White text for visibility */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 0;
+            margin: 0;
+            overflow: hidden; /* Hide any potential scrollbars */
+        }
+
+        /* Header styling */
+        .header-nav {
+            width: 100%;
+            background-color: #1a1a1a; /* Darker black for header */
+            box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            /* Changed to space-between to push SIJILL to one side and nav to other */
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+            position: relative; /* Needed for absolute positioning of SIJILL */
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem; /* Space between links */
+            align-items: center;
+            /* Position the nav links absolutely in the center */
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .nav-link {
+            color: #ffffff;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background-color: #333333; /* Dark gray on hover */
+        }
+
+        /* Style for the active navigation link */
+        .nav-link.active {
+            background-color: #4a4a4a; /* Highlight for the active page */
+            font-weight: bold;
+        }
+        
+        .sijill-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ffffff;
+            /* Ensure SIJILL is at the right edge */
+            margin-left: auto; /* Pushes it to the right */
+        }
+
+        /* Responsive adjustments for header */
+        @media (max-width: 768px) {
+            .header-nav {
+                flex-direction: column; /* Stack items on small screens */
+                padding: 1rem;
+            }
+            .nav-links {
+                position: static; /* Remove absolute positioning on small screens */
+                transform: none;
+                margin-top: 1rem;
+                width: 100%;
+                justify-content: space-around; /* Distribute links evenly */
+            }
+            .sijill-name {
+                font-size: 1.5rem;
+                margin-top: 1rem; /* Add space when stacked */
+                margin-left: 0; /* Remove auto margin when stacked */
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header/Navigation Bar -->
+    <header class="header-nav">
+        <!-- Placeholder div to push SIJILL to the right on larger screens -->
+        <div class="w-1/3"></div> 
+        <div class="nav-links">
+            <a href="/views/home.html" class="nav-link active">Home</a>
+            <a href="/work" class="nav-link">Work</a>
+        </div>
+        <div class="sijill-name">SIJILL</div>
+    </header>
+
+    <!-- Main content area will be added here later -->
+</body>
+</html>

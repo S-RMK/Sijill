@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <style>
+    body, html, #app {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        #app {
+          overflow: hidden;
+        }
+
+        #app canvas {
+            display: block;
+            position: fixed;
+            z-index: -1;
+            top: 0;
+        }
+  </style>
+  <script type="module" crossorigin src="/assets/index-DgZU_rtD.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-CVTDji3l.css">
+</head>
+<body>
+  <div id="app">
+
+            <canvas></canvas>
+            <div class="box absolute flex items-center justify-center z-10 top-[30%] lg:left-[35%] left-[20%]">
+               <form action="/login" method="POST" class="flex flex-col items-center justify-center h-full w-full p-4" style="gap: 1rem;">
+                <h2 class="text-xl font-bold mb-2 text-amber-100 lg:text-4xl">Login</h2>
+                <div class="w-full">
+                  <label for="username" class="block text-sm font-medium mb-1 text-amber-100">Username</label>
+                  <input type="text" id="username" name="username" class="w-full lg:w-[400px] px-2 py-1 border rounded-2xl bg-transparent text-white border-white" required placeholder="Username">
+                </div>
+                <div class="w-full">
+                  <label for="password" class="block text-sm font-medium mb-1 text-amber-100">Password</label>
+                  <input type="password" id="password" name="password" class="w-full px-2 py-1 border rounded-2xl bg-transparent border-white text-white" required placeholder="Password">
+                </div>
+                 <input type="submit" value="Sign in" class="bg-blue-500 text-white px-4 py-2 rounded-2xl hover:bg-blue-600 w-full mt-2">
+           </form>
+            <p class="error-message" id="errorMessage" style="color: #ff6b6b; margin-top: 10px;"></p>
+              </div>
+    </div>
+ <script>
+    // Check for error message in URL query parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+    if (error) {
+        document.getElementById('errorMessage').innerText = 'Invalid username or password.';
+    }
+  </script>
+</body>
+
+</html>

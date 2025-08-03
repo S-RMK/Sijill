@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIJILL Work</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the full black theme */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000; /* Full black background */
+            color: #ffffff; /* White text for visibility */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 0;
+            margin: 0;
+            overflow: hidden; /* Hide any potential scrollbars */
+        }
+
+        /* Header styling */
+        .header-nav {
+            width: 100%;
+            background-color: #1a1a1a; /* Darker black for header */
+            box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+            position: relative;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem; /* Space between links */
+            align-items: center;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .nav-link {
+            color: #ffffff;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background-color: #333333; /* Dark gray on hover */
+        }
+
+        /* Style for the active navigation link */
+        .nav-link.active {
+            background-color: #4a4a4a; /* Highlight for the active page */
+            font-weight: bold;
+        }
+        
+        .sijill-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-left: auto;
+        }
+
+        /* --- New/Updated Styles for Work Page Content --- */
+
+        /* Segmented buttons for Syllabus/Codes */
+        .segmented-buttons-container {
+            margin-top: 2rem; /* Space below header */
+            display: flex;
+            background-color: #333333; /* Darker grey for container */
+            border-radius: 9999px; /* Fully rounded pills */
+            padding: 0.1rem; /* Smaller padding for thinner look */
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3); /* Inner shadow */
+            z-index: 1; /* Ensure it's above background */
+        }
+
+        .segmented-button {
+            padding: 0.4rem 2rem; /* Adjusted padding for thinner height */
+            border-radius: 9999px; /* Fully rounded pills */
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+            text-align: center;
+            display: inline-block;
+            color: #cccccc; /* Default text color for inactive */
+            font-size: 0.9rem; /* Slightly smaller font for thinner look */
+        }
+
+        .segmented-button.active {
+            background-color: #f97316; /* Orange-500 for active syllabus */
+            color: white;
+            box-shadow: 0 4px 10px rgba(249, 115, 22, 0.4); /* Orange shadow */
+        }
+
+        /* Subject Cards Grid */
+        .subject-cards-grid {
+            margin-top: 3rem; /* Space below segmented buttons */
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Responsive grid */
+            gap: 1.5rem; /* Space between cards */
+            width: 100%;
+            max-width: 900px; /* Max width for the grid */
+            padding: 0 1rem; /* Padding for smaller screens */
+        }
+
+        .subject-card-link {
+            text-decoration: none; /* Remove underline from links */
+            color: inherit; /* Inherit text color */
+        }
+
+        .subject-card {
+            background-color: #1a1a1a; /* Darker black for card background */
+            border-radius: 1.5rem; /* More rounded corners */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5); /* Deeper shadow */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .subject-card:hover {
+            transform: translateY(-5px); /* Slight lift on hover */
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.7);
+        }
+
+        .card-picture-placeholder {
+            width: 250px; /* Size of the picture placeholder */
+            height: 250px;
+            background-color: #333333; /* Dark grey placeholder */
+            border-radius: 0.75rem; /* Rounded corners for pic */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999999;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            border: 1px dashed #666666; /* Dashed border */
+            overflow: hidden; /* Ensure content fits */
+        }
+
+        .card-picture-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 0.75rem;
+        }
+
+        .card-subject-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ffffff; /* White text for subject name */
+            text-transform: uppercase;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .header-nav {
+                flex-direction: column;
+                padding: 1rem;
+            }
+            .nav-links {
+                position: static;
+                transform: none;
+                margin-top: 1rem;
+                width: 100%;
+                justify-content: space-around;
+            }
+            .sijill-name {
+                font-size: 1.5rem;
+                margin-top: 1rem;
+                margin-left: 0;
+            }
+            .segmented-buttons-container {
+                flex-direction: column; /* Stack buttons on small screens */
+                width: 80%; /* Adjust width */
+                padding: 0.5rem;
+            }
+            .segmented-button {
+                width: 100%; /* Full width when stacked */
+                margin-bottom: 0.5rem; /* Space between stacked buttons */
+            }
+            .segmented-button:last-child {
+                margin-bottom: 0;
+            }
+            .subject-cards-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Smaller cards on mobile */
+                gap: 1rem;
+            }
+            .card-picture-placeholder {
+                width: 100px;
+                height: 100px;
+            }
+            .card-subject-name {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header/Navigation Bar -->
+    <header class="header-nav">
+        <!-- Placeholder div to push SIJILL to the right on larger screens -->
+        <div class="w-1/3"></div> 
+        <div class="nav-links">
+            <a href="/views/home.html" class="nav-link">Home</a> <!-- Link to home.html -->
+            <a href="/views/work.html" class="nav-link active">Work</a> <!-- Active for this page -->
+        </div>
+        <div class="sijill-name">SIJILL</div>
+    </header>
+
+    <!-- Main Content Area for the Work page -->
+    <main class="w-full flex flex-col items-center py-8">
+        <!-- Syllabus / Codes Segmented Buttons -->
+        <div class="segmented-buttons-container">
+            <div class="segmented-button active" id="syllabusBtn">SYLLABUS</div>
+            <div class="segmented-button" id="codesBtn">CODES</div>
+        </div>
+
+        <!-- Subject Cards Grid -->
+        <div class="subject-cards-grid">
+            <!-- Card 1: CN -->
+            <a href="/assets/syllabus/CN.PDF" target="_blank" class="subject-card-link">
+                <div class="subject-card">
+                    <div class="card-picture-placeholder"> PIC</div>
+                    <span class="card-subject-name">CN</span>
+                </div>
+            </a>
+
+            <!-- Card 2: IRS -->
+            <a href="/assets/syllabus/IRS LAB.PDF" target="_blank" class="subject-card-link">
+                <div class="subject-card">
+                    <div class="card-picture-placeholder">Pic</div>
+                    <span class="card-subject-name">IRS</span>
+                </div>
+            </a>
+
+            <!-- Card 3: FSD -->
+            <a href="/public/assets/syllabus/FSD2.PDF" target="_blank" class="subject-card-link">
+                <div class="subject-card">
+                    <div class="card-picture-placeholder">Pic</div>
+                    <span class="card-subject-name">FSD</span>
+                </div>
+            </a>
+
+            <!-- Add more cards as needed -->
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const syllabusBtn = document.getElementById('syllabusBtn');
+            const codesBtn = document.getElementById('codesBtn');
+
+            // Function to handle button clicks (for future interactivity)
+            syllabusBtn.addEventListener('click', () => {
+                syllabusBtn.classList.add('active');
+                codesBtn.classList.remove('active');
+                // You can add logic here to display syllabus content
+                console.log('Syllabus button clicked!');
+            });
+
+            codesBtn.addEventListener('click', () => {
+                codesBtn.classList.add('active');
+                syllabusBtn.classList.remove('active');
+                // You can add logic here to display codes content
+                console.log('Codes button clicked!');
+            });
+        });
+    </script>
+</body>
+</html>
