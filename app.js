@@ -7,23 +7,47 @@ const multer = require('multer'); // For handling file uploads
 const admin = require('firebase-admin'); // For Firebase Admin SDK
 const fs = require('fs'); // Node.js File System module for deleting files
 
+// ---------------------------------------------------------------------
+// PLACE THE PROVIDED CODE BLOCK HERE:
 // Initialize Firebase Admin SDK
-// IMPORTANT: Place your 'firebase-adminsdk.json' file in the project root and add it to .gitignore
-const serviceAccount = require('./firebase-adminsdk.json');
+// IMPORTANT: Read service account config from environment variable
+// This is crucial for deployment platforms like Render
+let serviceAccount;
+try {
+    // Attempt to parse from environment variable
+    serviceAccount = JSON.parse(process.env.FIREBASE_ADMIN_SDK_CONFIG);
+} catch (e) {
+    console.error("Error parsing FIREBASE_ADMIN_SDK_CONFIG environment variable:", e);
+    console.error("Attempting to load from local file (for development only): ./firebase-adminsdk.json");
+    try {
+        // Fallback for local development if env var is not set
+        serviceAccount = require('./firebase-adminsdk.json');
+    } catch (localError) {
+        console.error("Error loading local firebase-adminsdk.json:", localError);
+        console.error("Firebase Admin SDK initialization failed. Application may not function correctly.");
+        process.exit(1);
+    }
+}
 
+if (!serviceAccount) {
+    console.error("Firebase Admin SDK service account configuration is missing. Exiting.");
+    process.exit(1);
+}
+// ---------------------------------------------------------------------
+
+// Initialize the Firebase Admin SDK with the loaded service account
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    // Replace with your Firestore database URL if needed for older versions,
-    // otherwise, it's often auto-detected for newer Firestore setups.
-    // databaseURL: "https://your-project-id.firebaseio.com"
+    // databaseURL: "https://your-project-id.firebaseio.com" // Uncomment if you have a specific database URL
 });
 
-const db = admin.firestore(); // Get a Firestore instance
+const db = admin.firestore(); // Now you can get a Firestore instance
 
 // Initialize the Express application
 const app = express();
 const PORT = 3000;
 
+// ... rest of your app.js code (session setup, middleware, routes, etc.)
 // --- Session Middleware Setup ---
 app.use(session({
     secret: 'your_super_secret_key_for_admin_app', // CHANGE THIS IN PRODUCTION!
