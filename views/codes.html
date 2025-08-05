@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIJILL Codes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the full black theme */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000; /* Full black background */
+            color: #ffffff; /* White text for visibility */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 0;
+            margin: 0;
+            overflow: hidden; /* Hide any potential scrollbars */
+        }
+
+        /* Header styling */
+        .header-nav {
+            width: 100%;
+            background-color: #1a1a1a; /* Darker black for header */
+            box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+            position: relative;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem; /* Space between links */
+            align-items: center;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .nav-link {
+            color: #ffffff;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background-color: #333333; /* Dark gray on hover */
+        }
+
+        /* Style for the active navigation link */
+        .nav-link.active {
+            background-color: #4a4a4a; /* Highlight for the active page */
+            font-weight: bold;
+        }
+        
+        .sijill-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-left: auto;
+        }
+
+        /* --- Styles for Codes Page Content --- */
+
+        /* Segmented buttons for Syllabus/Codes */
+        .segmented-buttons-container {
+            margin-top: 1rem; /* Moved slightly upper */
+            display: flex;
+            background-color: #333333; /* Darker grey for container */
+            border-radius: 9999px; /* Fully rounded pills */
+            padding: 0.1rem; /* Smaller padding for thinner look */
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3); /* Inner shadow */
+            z-index: 1; /* Ensure it's above background */
+        }
+
+        .segmented-button {
+            padding: 0.4rem 2rem; /* Adjusted padding for thinner height */
+            border-radius: 9999px; /* Fully rounded pills */
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+            text-align: center;
+            display: inline-block;
+            color: #cccccc; /* Default text color for inactive */
+            font-size: 0.9rem; /* Slightly smaller font for thinner look */
+        }
+
+        .segmented-button.active {
+            background-color: #f97316; /* Orange-500 for active codes */
+            color: white;
+            box-shadow: 0 4px 10px rgba(249, 115, 22, 0.4); /* Orange shadow */
+        }
+
+        /* Subject Buttons Grid (for CN, IRS, FSD, UIDF) */
+        .subject-buttons-grid {
+            margin-top: 3rem; /* Space below segmented buttons */
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Responsive grid */
+            gap: 1.5rem; /* Space between buttons */
+            width: 100%;
+            max-width: 600px; /* Max width for the grid of buttons */
+            padding: 0 1rem; /* Padding for smaller screens */
+            position: relative; /* For animating children */
+            transition: opacity 0.5s ease; /* Fade out grid */
+        }
+
+        .subject-btn-link {
+            text-decoration: none; /* Remove underline from links */
+            color: inherit; /* Inherit text color */
+            display: block; /* Make the link take full button space */
+        }
+
+        .subject-btn {
+            background-color: #333333; /* Dark grey background for buttons */
+            border-radius: 9999px; /* Fully rounded pill shape */
+            padding: 0.8rem 1.5rem;
+            font-weight: bold;
+            color: #ffffff; /* White text */
+            text-transform: uppercase;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, opacity 0.5s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            position: relative; /* For animation positioning */
+        }
+
+        .subject-btn:hover {
+            background-color: #555555; /* Lighter grey on hover */
+            transform: translateY(-2px); /* Slight lift */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Animation for clicked button */
+        .subject-btn.animate-to-top-left {
+            position: fixed; /* Fix position relative to viewport */
+            z-index: 20; /* Bring to front */
+            /* Adjusted top to account for header and segmented button container */
+            top: calc(1rem + 1rem + 1rem + 0.1rem + 0.4rem); /* Header padding + segmented button margin + padding + button padding */
+            left: 2rem; /* Match header left padding */
+            transform: scale(0.8); /* Slightly smaller */
+            transition: top 0.7s ease-in-out, left 0.7s ease-in-out, transform 0.7s ease-in-out, opacity 0.7s ease-in-out;
+            background-color: #f97316; /* Orange color for the animated button */
+        }
+
+        /* Animation for other buttons disappearing */
+        .subject-btn.fade-out {
+            opacity: 0;
+            pointer-events: none; /* Disable clicks during fade */
+        }
+
+        /* Document Detail View */
+        .document-detail-view {
+            display: flex;
+            flex-grow: 1; /* Take remaining space */
+            width: 100%;
+            max-width: 1200px; /* Max width for the content area */
+            margin-top: 2rem; /* Space below segmented buttons */
+            opacity: 0; /* Initially hidden */
+            transform: translateY(20px); /* Slide up effect */
+            transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+            pointer-events: none; /* Initially disable clicks */
+            height: calc(100vh - 1rem - 1rem - 1rem - 0.1rem - 0.4rem - 2rem - 2rem); /* Calculate available height */
+        }
+
+        .document-detail-view.visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto; /* Enable clicks when visible */
+        }
+
+        .document-list-container {
+            width: 250px; /* Fixed width for the document list */
+            background-color: #1a1a1a; /* Darker black background */
+            border-radius: 1rem;
+            padding: 1rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            overflow-y: auto; /* Enable vertical scrolling */
+            margin-right: 1.5rem; /* Space between list and viewer */
+            max-height: 100%; /* Ensure it respects parent height */
+        }
+
+        .document-list-item {
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            background-color: #333333; /* Dark grey for list items */
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            color: #ffffff;
+            white-space: nowrap; /* Prevent text wrapping */
+            overflow: hidden; /* Hide overflow text */
+            text-overflow: ellipsis; /* Add ellipsis for overflow */
+        }
+
+        .document-list-item:hover {
+            background-color: #555555; /* Lighter grey on hover */
+        }
+
+        .document-viewer-container {
+            flex-grow: 1; /* Take remaining width */
+            background-color: #1a1a1a;
+            border-radius: 1rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; /* Hide iframe scrollbars */
+        }
+
+        .document-viewer-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 1rem;
+        }
+
+        /* Back button */
+        .back-button {
+            position: absolute;
+            top: calc(1rem + 1rem + 1rem + 0.1rem + 0.4rem); /* Align with animated button */
+            left: 2rem;
+            z-index: 30; /* Above animated button */
+            background-color: #f97316; /* Orange */
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            display: none; /* Hidden by default */
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .back-button.visible {
+            display: block;
+            opacity: 1;
+            pointer-events: auto;
+            transition: opacity 0.5s ease 0.7s; /* Appear after animation */
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .header-nav {
+                flex-direction: column;
+                padding: 1rem;
+            }
+            .nav-links {
+                position: static;
+                transform: none;
+                margin-top: 1rem;
+                width: 100%;
+                justify-content: space-around;
+            }
+            .sijill-name {
+                font-size: 1.5rem;
+                margin-top: 1rem;
+                margin-left: 0;
+            }
+            .segmented-buttons-container {
+                flex-direction: column; /* Stack buttons on small screens */
+                width: 80%; /* Adjust width */
+                padding: 0.5rem;
+            }
+            .segmented-button {
+                width: 100%; /* Full width when stacked */
+                margin-bottom: 0.5rem; /* Space between stacked buttons */
+            }
+            .segmented-button:last-child {
+                margin-bottom: 0;
+            }
+            .subject-buttons-grid {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Smaller buttons on mobile */
+                gap: 1rem;
+            }
+            .subject-btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.8rem;
+            }
+            .document-detail-view {
+                flex-direction: column; /* Stack list and viewer on small screens */
+                height: auto; /* Allow height to adjust */
+                margin-top: 1.5rem;
+            }
+            .document-list-container {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 1.5rem; /* Space between list and viewer */
+                max-height: 30vh; /* Limit height for scrolling on mobile */
+            }
+            .document-viewer-container {
+                height: 50vh; /* Give viewer a fixed height on mobile */
+            }
+            .back-button {
+                top: calc(1rem + 1rem + 0.1rem + 0.4rem + 1rem); /* Adjust for stacked header */
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header/Navigation Bar -->
+    <header class="header-nav">
+        <!-- Placeholder div to push SIJILL to the right on larger screens -->
+        <div class="w-1/3"></div> 
+        <div class="nav-links">
+            <a href="/home" class="nav-link">Home</a> <!-- Link to home route -->
+            <a href="/work" class="nav-link">Work</a> <!-- Link to work route -->
+        </div>
+        <div class="sijill-name">SIJILL</div>
+    </header>
+
+    <!-- Main Content Area for the Codes page -->
+    <main class="w-full flex flex-col items-center py-8 relative">
+        <!-- Syllabus / Codes Segmented Buttons -->
+        <div class="segmented-buttons-container">
+            <a href="/work" class="segmented-button" id="syllabusBtn">SYLLABUS</a> <!-- Link to work page (Syllabus) -->
+            <a href="/codes" class="segmented-button active" id="codesBtn">CODES</a> <!-- Active for this page -->
+        </div>
+
+        <!-- Initial Subject Buttons Grid for Codes -->
+        <div class="subject-buttons-grid" id="subjectGrid">
+            <!-- Code Subject Buttons -->
+            <a href="#" class="subject-btn-link" data-subject="CN">
+                <div class="subject-btn">CN</div>
+            </a>
+            <a href="#" class="subject-btn-link" data-subject="IRS">
+                <div class="subject-btn">IRS</div>
+            </a>
+            <a href="#" class="subject-btn-link" data-subject="FSD">
+                <div class="subject-btn">FSD</div>
+            </a>
+            <a href="#" class="subject-btn-link" data-subject="UIDF">
+                <div class="subject-btn">UIDF</div>
+            </a>
+            <!-- Add more code subject buttons as needed -->
+        </div>
+
+        <!-- Back Button (initially hidden) -->
+        <button id="backButton" class="back-button">
+            <i class="fas fa-arrow-left"></i> Back to Subjects
+        </button>
+
+        <!-- Document Detail View (initially hidden) -->
+        <div id="documentDetailView" class="document-detail-view">
+            <div class="document-list-container">
+                <h3 class="text-lg font-bold mb-4 text-white" id="selectedSubjectTitle"></h3>
+                <div id="documentList">
+                    <!-- Document list items will be populated here by JS -->
+                </div>
+            </div>
+            <div class="document-viewer-container">
+                <iframe id="documentViewer" src="" allowfullscreen></iframe>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const subjectGrid = document.getElementById('subjectGrid');
+            const subjectButtons = document.querySelectorAll('.subject-btn-link');
+            const documentDetailView = document.getElementById('documentDetailView');
+            const selectedSubjectTitle = document.getElementById('selectedSubjectTitle');
+            const documentList = document.getElementById('documentList');
+            const documentViewer = document.getElementById('documentViewer');
+            const backButton = document.getElementById('backButton');
+
+            // --- Function to fetch documents for a given subject (and optional topic) ---
+            async function fetchDocumentsForSubject(subjectId, topic = null) {
+                let url = `/api/documents?subjectId=${subjectId}`;
+                if (topic) {
+                    url += `&topic=${topic}`;
+                }
+                try {
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    const documents = await response.json();
+                    return documents;
+                } catch (error) {
+                    console.error('Error fetching documents:', error);
+                    return []; // Return empty array on error
+                }
+            }
+
+            // --- Function to handle subject button click ---
+            subjectButtons.forEach(button => {
+                button.addEventListener('click', async (e) => { // Made async
+                    e.preventDefault(); // Prevent default link behavior
+                    const clickedSubjectBtn = e.currentTarget;
+                    const subjectCode = clickedSubjectBtn.dataset.subject;
+
+                    // 1. Animate clicked button and hide others
+                    const rect = clickedSubjectBtn.getBoundingClientRect();
+                    const initialTop = rect.top;
+                    const initialLeft = rect.left;
+
+                    // Apply initial fixed position to the clicked button
+                    clickedSubjectBtn.style.position = 'fixed';
+                    clickedSubjectBtn.style.top = initialTop + 'px';
+                    clickedSubjectBtn.style.left = initialLeft + 'px';
+                    clickedSubjectBtn.style.width = rect.width + 'px'; // Maintain initial width
+                    clickedSubjectBtn.style.height = rect.height + 'px'; // Maintain initial height
+
+                    // Add animation class to the clicked button
+                    clickedSubjectBtn.classList.add('animate-to-top-left');
+
+                    // Fade out other buttons
+                    subjectButtons.forEach(otherButton => {
+                        if (otherButton !== clickedSubjectBtn) {
+                            otherButton.classList.add('fade-out');
+                        }
+                    });
+
+                    // Hide the entire grid after a short delay (matching animation)
+                    setTimeout(() => {
+                        subjectGrid.style.display = 'none';
+                        clickedSubjectBtn.style.display = 'none'; // Hide the original button element
+                    }, 700); 
+
+                    // 2. Show document detail view after animation
+                    setTimeout(async () => { // Made async
+                        documentDetailView.classList.add('visible');
+                        backButton.classList.add('visible'); // Show back button
+                        
+                        // 3. Populate document list from API
+                        selectedSubjectTitle.innerText = subjectCode + " Documents";
+                        documentList.innerHTML = '<div style="color: #ccc; text-align: center; padding: 20px;">Loading documents...</div>'; // Loading indicator
+
+                        const documents = await fetchDocumentsForSubject(subjectCode); // Fetch documents from API
+
+                        documentList.innerHTML = ''; // Clear loading indicator
+
+                        if (documents.length > 0) {
+                            documents.forEach((doc, index) => { // Added index
+                                const listItem = document.createElement('div');
+                                listItem.classList.add('document-list-item');
+                                listItem.innerText = `${index + 1}`; // Display number
+                                listItem.dataset.url = doc.filePath; // Use filePath from Firestore
+                                listItem.addEventListener('click', () => {
+                                    documentViewer.src = listItem.dataset.url;
+                                });
+                                documentList.appendChild(listItem);
+                            });
+                            // Set the first document as default in the viewer
+                            documentViewer.src = documents[0].filePath;
+                        } else {
+                            documentList.innerText = 'No documents found for this subject. Upload some from the Admin page!';
+                            documentViewer.src = ''; // Clear viewer if no docs
+                        }
+                    }, 700); // Start showing after animation completes
+                });
+            });
+
+            // --- Back button functionality ---
+            backButton.addEventListener('click', () => {
+                // Hide document detail view
+                documentDetailView.classList.remove('visible');
+                backButton.classList.remove('visible');
+
+                // Reset and show subject grid
+                subjectGrid.style.display = 'grid'; // Show the grid
+                subjectButtons.forEach(button => {
+                    button.classList.remove('animate-to-top-left', 'fade-out');
+                    button.style.position = ''; // Remove fixed position
+                    button.style.top = '';
+                    button.style.left = '';
+                    button.style.width = '';
+                    button.style.height = '';
+                    button.style.display = 'block'; // Ensure they are visible again
+                });
+                documentViewer.src = ''; // Clear viewer when going back
+            });
+        });
+    </script>
+</body>
+</html>

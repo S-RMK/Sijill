@@ -134,8 +134,8 @@
         }
 
         .card-picture-placeholder {
-            width: 250px; /* Size of the picture placeholder */
-            height: 250px;
+            width: 120px; /* Size of the picture placeholder */
+            height: 120px;
             background-color: #333333; /* Dark grey placeholder */
             border-radius: 0.75rem; /* Rounded corners for pic */
             display: flex;
@@ -212,8 +212,8 @@
         <!-- Placeholder div to push SIJILL to the right on larger screens -->
         <div class="w-1/3"></div> 
         <div class="nav-links">
-            <a href="/views/home.html" class="nav-link">Home</a> <!-- Link to home.html -->
-            <a href="/views/work.html" class="nav-link active">Work</a> <!-- Active for this page -->
+            <a href="/home" class="nav-link">Home</a> <!-- Link to home route -->
+            <a href="/work" class="nav-link active">Work</a> <!-- Active for this page -->
         </div>
         <div class="sijill-name">SIJILL</div>
     </header>
@@ -222,22 +222,23 @@
     <main class="w-full flex flex-col items-center py-8">
         <!-- Syllabus / Codes Segmented Buttons -->
         <div class="segmented-buttons-container">
-            <div class="segmented-button active" id="syllabusBtn">SYLLABUS</div>
-            <div class="segmented-button" id="codesBtn">CODES</div>
+            <a href="/work" class="segmented-button active" id="syllabusBtn">SYLLABUS</a> <!-- Active for this page -->
+            <a href="/codes" class="segmented-button" id="codesBtn">CODES</a> <!-- Link to codes route -->
         </div>
 
-        <!-- Subject Cards Grid -->
-        <div class="subject-cards-grid">
+        <!-- Syllabus Cards Grid (always visible on this page) -->
+        <div id="syllabusContent" class="subject-cards-grid">
+            <!-- Syllabus Cards -->
             <!-- Card 1: CN -->
-            <a href="/assets/syllabus/CN.PDF" target="_blank" class="subject-card-link">
+            <a href="/cn_syllabus.pdf" target="_blank" class="subject-card-link">
                 <div class="subject-card">
-                    <div class="card-picture-placeholder"> PIC</div>
+                    <div class="card-picture-placeholder">Pic</div>
                     <span class="card-subject-name">CN</span>
                 </div>
             </a>
 
             <!-- Card 2: IRS -->
-            <a href="/assets/syllabus/IRS LAB.PDF" target="_blank" class="subject-card-link">
+            <a href="/irs_syllabus.pdf" target="_blank" class="subject-card-link">
                 <div class="subject-card">
                     <div class="card-picture-placeholder">Pic</div>
                     <span class="card-subject-name">IRS</span>
@@ -245,37 +246,14 @@
             </a>
 
             <!-- Card 3: FSD -->
-            <a href="/public/assets/syllabus/FSD2.PDF" target="_blank" class="subject-card-link">
+            <a href="/fsd_syllabus.pdf" target="_blank" class="subject-card-link">
                 <div class="subject-card">
                     <div class="card-picture-placeholder">Pic</div>
                     <span class="card-subject-name">FSD</span>
                 </div>
             </a>
-
-            <!-- Add more cards as needed -->
+            <!-- Add more syllabus cards as needed -->
         </div>
     </main>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const syllabusBtn = document.getElementById('syllabusBtn');
-            const codesBtn = document.getElementById('codesBtn');
-
-            // Function to handle button clicks (for future interactivity)
-            syllabusBtn.addEventListener('click', () => {
-                syllabusBtn.classList.add('active');
-                codesBtn.classList.remove('active');
-                // You can add logic here to display syllabus content
-                console.log('Syllabus button clicked!');
-            });
-
-            codesBtn.addEventListener('click', () => {
-                codesBtn.classList.add('active');
-                syllabusBtn.classList.remove('active');
-                // You can add logic here to display codes content
-                console.log('Codes button clicked!');
-            });
-        });
-    </script>
 </body>
 </html>

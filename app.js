@@ -2,80 +2,227 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
-const session = require('express-session'); // Import express-session
+const session = require('express-session');
+const multer = require('multer'); // For handling file uploads
+const admin = require('firebase-admin'); // For Firebase Admin SDK
+const fs = require('fs'); // Node.js File System module for deleting files
+
+// Initialize Firebase Admin SDK
+// IMPORTANT: Place your 'firebase-adminsdk.json' file in the project root and add it to .gitignore
+const serviceAccount = require('./firebase-adminsdk.json');
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    // Replace with your Firestore database URL if needed for older versions,
+    // otherwise, it's often auto-detected for newer Firestore setups.
+    // databaseURL: "https://your-project-id.firebaseio.com"
+});
+
+const db = admin.firestore(); // Get a Firestore instance
 
 // Initialize the Express application
 const app = express();
-const PORT = 3000; // Define the port for the server to listen on
+const PORT = 3000;
 
 // --- Session Middleware Setup ---
-// Configure session middleware. This creates a session for each user.
 app.use(session({
-    secret: 'your_super_secret_key', // A secret to sign the session ID cookie. CHANGE THIS IN PRODUCTION!
-    resave: false, // Don't save session if unmodified
-    saveUninitialized: false, // Don't create session until something stored
+    secret: 'your_super_secret_key_for_admin_app', // CHANGE THIS IN PRODUCTION!
+    resave: false,
+    saveUninitialized: false,
     cookie: {
-        maxAge: 1000 * 60 * 60 * 24 // Session lasts for 24 hours
+        maxAge: 1000 * 60 * 60 * 24 // 24 hours
     }
 }));
 
 // Middleware to parse URL-encoded bodies (from HTML forms)
 app.use(bodyParser.urlencoded({ extended: true }));
+// Middleware to parse JSON bodies (if you send JSON from frontend)
+app.use(bodyParser.json());
 
-// Serve static files from the 'public' directory (only for files like index.html, CSS, JS, images, PDFs)
+// Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Hardcoded credentials for demonstration purposes
+// --- Multer Setup for File Uploads ---
+// Configure storage for uploaded files
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        // Files will be saved in 'public/uploads/'
+        // Make sure this directory exists in your 'public' folder!
+        const uploadPath = path.join(__dirname, 'public', 'uploads');
+        if (!fs.existsSync(uploadPath)) {
+            fs.mkdirSync(uploadPath, { recursive: true });
+        }
+        cb(null, uploadPath);
+    },
+    filename: function (req, file, cb) {
+        // Use the original filename, but ensure it's unique by prepending a timestamp
+        cb(null, Date.now() + '-' + file.originalname);
+    }
+});
+const upload = multer({ storage: storage });
+
+// --- User Credentials ---
 const VALID_USERNAME = 'nightowls';
 const VALID_PASSWORD = '123456';
 
+const ADMIN_USERNAME = 'mounica';
+const ADMIN_PASSWORD = 'mentalmounica'; // CHANGE THIS IN PRODUCTION!
+
 // --- Authentication Middleware ---
-// This middleware checks if the user is authenticated.
 function isAuthenticated(req, res, next) {
     if (req.session.isAuthenticated) {
-        next(); // User is authenticated, proceed to the next middleware/route handler
+        next();
     } else {
-        res.redirect('/?error=unauthorized'); // User is not authenticated, redirect to login page
+        res.redirect('/?error=unauthorized');
+    }
+}
+
+// --- Admin Authorization Middleware ---
+function isAdmin(req, res, next) {
+    if (req.session.isAdmin) {
+        next();
+    } else {
+        res.status(403).send('Access Denied: Administrators only.');
     }
 }
 
 // --- Routes ---
 
-// Route to handle login form submission
+// Login Route
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
 
     if (username === VALID_USERNAME && password === VALID_PASSWORD) {
-        req.session.isAuthenticated = true; // Set session variable on successful login
-        console.log('Login successful for user:', username);
-        res.redirect('/home'); // Redirect to the protected home route
+        req.session.isAuthenticated = true;
+        req.session.isAdmin = false; // Regular user
+        console.log('Login successful for regular user:', username);
+        res.redirect('/home');
+    } else if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+        req.session.isAuthenticated = true;
+        req.session.isAdmin = true; // Admin user
+        console.log('Login successful for admin user:', username);
+        res.redirect('/admin'); // Redirect to admin page
     } else {
         console.log('Login failed for user:', username);
-        res.redirect('/?error=invalid'); // Redirect back to login with error
+        res.redirect('/?error=invalid');
     }
 });
 
 // Protected Home Page Route
 app.get('/home', isAuthenticated, (req, res) => {
-    // If isAuthenticated middleware passes, serve the home.html file
     res.sendFile(path.join(__dirname, 'views', 'home.html'));
 });
 
-// Protected Work Page Route
+// Protected Work Page (Syllabus) Route
 app.get('/work', isAuthenticated, (req, res) => {
-    // If isAuthenticated middleware passes, serve the work.html file
     res.sendFile(path.join(__dirname, 'views', 'work.html'));
+});
+
+// Protected Codes Page Route
+app.get('/codes', isAuthenticated, (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'codes.html'));
+});
+
+// Protected Admin Page Route
+app.get('/admin', isAuthenticated, isAdmin, (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'admin.html'));
+});
+
+// API to get subjects and topics for dropdowns (for admin page)
+app.get('/api/subjects-topics', isAuthenticated, isAdmin, async (req, res) => {
+    try {
+        const subjectsRef = db.collection('subjects');
+        const snapshot = await subjectsRef.get();
+        const subjects = [];
+        snapshot.forEach(doc => {
+            subjects.push({ id: doc.id, name: doc.data().name, topics: doc.data().topics || [] });
+        });
+        res.json(subjects);
+    } catch (error) {
+        console.error('Error fetching subjects and topics:', error);
+        res.status(500).json({ error: 'Failed to fetch subjects and topics.' });
+    }
+});
+
+// NEW API: To get documents by subject and optionally by topic (for codes page)
+app.get('/api/documents', isAuthenticated, async (req, res) => {
+    try {
+        const { subjectId, topic } = req.query; // Get subjectId and topic from query parameters
+
+        if (!subjectId) {
+            return res.status(400).json({ error: 'Subject ID is required.' });
+        }
+
+        let query = db.collection('documents').where('subject', '==', subjectId);
+
+        if (topic) {
+            query = query.where('topic', '==', topic);
+        }
+
+        const snapshot = await query.get();
+        const documents = [];
+        snapshot.forEach(doc => {
+            documents.push({
+                id: doc.id,
+                name: doc.data().name,
+                filePath: doc.data().filePath, // This is the path relative to 'public'
+                topic: doc.data().topic,
+                subject: doc.data().subject
+            });
+        });
+        res.json(documents);
+    } catch (error) {
+        console.error('Error fetching documents:', error);
+        res.status(500).json({ error: 'Failed to fetch documents.' });
+    }
+});
+
+
+// API to handle document uploads
+app.post('/upload-document', isAuthenticated, isAdmin, upload.single('documentFile'), async (req, res) => {
+    try {
+        const { subject, topic, documentName } = req.body;
+        const file = req.file;
+
+        if (!file) {
+            return res.status(400).send('No file uploaded.');
+        }
+
+        if (!subject || !topic || !documentName) {
+            // If any required field is missing, delete the uploaded file
+            fs.unlinkSync(file.path);
+            return res.status(400).send('Subject, Topic, and Document Name are required.');
+        }
+
+        // Store document metadata in Firestore
+        await db.collection('documents').add({
+            subject: subject, // Storing subject ID
+            topic: topic,
+            name: documentName,
+            filePath: '/uploads/' + file.filename, // Path accessible from public folder
+            uploadedAt: admin.firestore.FieldValue.serverTimestamp()
+        });
+
+        res.status(200).send('Document uploaded and metadata saved successfully!');
+    } catch (error) {
+        console.error('Error uploading document:', error);
+        // Ensure file is deleted if there's a Firestore error
+        if (req.file && req.file.path) {
+            fs.unlinkSync(req.file.path);
+        }
+        res.status(500).send('Failed to upload document.');
+    }
 });
 
 // Logout Route
 app.get('/logout', (req, res) => {
-    req.session.destroy(err => { // Destroy the session
+    req.session.destroy(err => {
         if (err) {
             console.error('Error destroying session:', err);
-            return res.redirect('/home'); // Or an error page
+            return res.redirect('/home');
         }
-        res.clearCookie('connect.sid'); // Clear the session cookie
-        res.redirect('/'); // Redirect to the login page
+        res.clearCookie('connect.sid');
+        res.redirect('/');
     });
 });
 

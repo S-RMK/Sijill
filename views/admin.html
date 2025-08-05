@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIJILL Admin - Document Upload</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 0;
+            margin: 0;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+
+        .header-nav {
+            width: 100%;
+            background-color: #1a1a1a;
+            box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+            position: relative;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .nav-link {
+            color: #ffffff;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background-color: #333333;
+        }
+
+        .nav-link.active {
+            background-color: #4a4a4a;
+            font-weight: bold;
+        }
+        
+        .sijill-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-left: auto;
+        }
+
+        .admin-container {
+            background-color: #1a1a1a;
+            border-radius: 1rem;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+            padding: 2rem;
+            margin-top: 3rem;
+            width: 90%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-weight: 600;
+            color: #cccccc;
+        }
+
+        input[type="text"],
+        select,
+        input[type="file"] {
+            background-color: #333333;
+            border: 1px solid #555555;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            color: #ffffff;
+            font-size: 1rem;
+            width: 100%;
+            box-sizing: border-box; /* Include padding in width */
+        }
+
+        input[type="file"] {
+            padding: 0.5rem 1rem; /* Adjust padding for file input */
+        }
+
+        input[type="file"]::file-selector-button {
+            background-color: #f97316; /* Orange */
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            margin-right: 1rem;
+        }
+
+        input[type="file"]::file-selector-button:hover {
+            background-color: #e06a12; /* Darker orange */
+        }
+
+        button[type="submit"] {
+            background-color: #4CAF50; /* Green */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            border: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        button[type="submit"]:hover {
+            background-color: #45a049; /* Darker green */
+            transform: translateY(-2px);
+        }
+
+        .message-box {
+            background-color: #333333;
+            color: #ffffff;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1.5rem;
+            text-align: center;
+            display: none; /* Hidden by default */
+        }
+
+        .message-box.success {
+            background-color: #28a745; /* Green for success */
+        }
+
+        .message-box.error {
+            background-color: #dc3545; /* Red for error */
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #fff;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .header-nav {
+                flex-direction: column;
+                padding: 1rem;
+            }
+            .nav-links {
+                position: static;
+                transform: none;
+                margin-top: 1rem;
+                width: 100%;
+                justify-content: space-around;
+            }
+            .sijill-name {
+                font-size: 1.5rem;
+                margin-top: 1rem;
+                margin-left: 0;
+            }
+            .admin-container {
+                padding: 1.5rem;
+                margin-top: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header/Navigation Bar -->
+    <header class="header-nav">
+        <div class="w-1/3"></div> 
+        <div class="nav-links">
+            <a href="/home" class="nav-link">Home</a>
+            <a href="/work" class="nav-link">Work</a>
+            <a href="/admin" class="nav-link active">Admin</a> <!-- Active for admin page -->
+        </div>
+        <div class="sijill-name">SIJILL</div>
+    </header>
+
+    <!-- Main Content Area for Admin Page -->
+    <main class="w-full flex flex-col items-center py-8">
+        <div class="admin-container">
+            <h2 class="text-2xl font-bold text-white text-center mb-4">Upload Document</h2>
+            <form id="uploadForm" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="subjectSelect">Subject:</label>
+                    <select id="subjectSelect" name="subject" required class="w-full">
+                        <option value="">Select Subject</option>
+                        <!-- Options will be populated by JavaScript -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="topicSelect">Topic:</label>
+                    <select id="topicSelect" name="topic" required class="w-full">
+                        <option value="">Select Topic</option>
+                        <!-- Options will be populated by JavaScript -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="documentNameInput">Document Name:</label>
+                    <input type="text" id="documentNameInput" name="documentName" placeholder="e.g., Chapter 1 Notes" required class="w-full">
+                </div>
+
+                <div class="form-group">
+                    <label for="documentFileInput">Document File:</label>
+                    <input type="file" id="documentFileInput" name="documentFile" accept=".pdf,.doc,.docx" required class="w-full">
+                </div>
+
+                <button type="submit" class="w-full mt-4">
+                    <span id="uploadSpinner" class="hidden loading-spinner"></span>
+                    Upload Document
+                </button>
+            </form>
+            <div id="messageBox" class="message-box"></div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const subjectSelect = document.getElementById('subjectSelect');
+            const topicSelect = document.getElementById('topicSelect');
+            const uploadForm = document.getElementById('uploadForm');
+            const messageBox = document.getElementById('messageBox');
+            const uploadSpinner = document.getElementById('uploadSpinner');
+
+            // --- Function to fetch subjects and topics from Firestore ---
+            async function fetchSubjectsAndTopics() {
+                try {
+                    const response = await fetch('/api/subjects-topics');
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    const subjects = await response.json();
+                    
+                    // Clear existing options
+                    subjectSelect.innerHTML = '<option value="">Select Subject</option>';
+                    topicSelect.innerHTML = '<option value="">Select Topic</option>';
+
+                    // Populate subjects dropdown
+                    subjects.forEach(subject => {
+                        const option = document.createElement('option');
+                        option.value = subject.id; // Use Firestore document ID as value
+                        option.innerText = subject.name;
+                        subjectSelect.appendChild(option);
+                    });
+
+                    // Store subjects data for dynamic topic population
+                    subjectSelect.dataset.subjectsData = JSON.stringify(subjects);
+
+                } catch (error) {
+                    console.error('Error fetching subjects and topics:', error);
+                    showMessage('Error loading subjects and topics. Please try again.', 'error');
+                }
+            }
+
+            // --- Event listener for subject selection change ---
+            subjectSelect.addEventListener('change', () => {
+                const selectedSubjectId = subjectSelect.value;
+                topicSelect.innerHTML = '<option value="">Select Topic</option>'; // Clear topics
+
+                if (selectedSubjectId) {
+                    const subjectsData = JSON.parse(subjectSelect.dataset.subjectsData);
+                    const selectedSubject = subjectsData.find(s => s.id === selectedSubjectId);
+
+                    if (selectedSubject && selectedSubject.topics) {
+                        selectedSubject.topics.forEach(topic => {
+                            const option = document.createElement('option');
+                            option.value = topic; // Topic name as value
+                            option.innerText = topic;
+                            topicSelect.appendChild(option);
+                        });
+                    }
+                }
+            });
+
+            // --- Handle form submission for document upload ---
+            uploadForm.addEventListener('submit', async (e) => {
+                e.preventDefault(); // Prevent default form submission
+
+                const formData = new FormData(uploadForm);
+                
+                // Show loading spinner and disable button
+                uploadSpinner.classList.remove('hidden');
+                uploadForm.querySelector('button[type="submit"]').disabled = true;
+                messageBox.style.display = 'none'; // Hide previous messages
+
+                try {
+                    const response = await fetch('/upload-document', {
+                        method: 'POST',
+                        body: formData // FormData automatically sets Content-Type to multipart/form-data
+                    });
+
+                    const responseText = await response.text(); // Get response as text
+
+                    if (response.ok) {
+                        showMessage('Document uploaded successfully!', 'success');
+                        uploadForm.reset(); // Clear the form
+                        // Re-fetch subjects/topics in case new ones were added (though not directly from this form)
+                        await fetchSubjectsAndTopics(); 
+                    } else {
+                        showMessage(`Upload failed: ${responseText || response.statusText}`, 'error');
+                    }
+                } catch (error) {
+                    console.error('Error during upload:', error);
+                    showMessage('An unexpected error occurred during upload.', 'error');
+                } finally {
+                    uploadSpinner.classList.add('hidden');
+                    uploadForm.querySelector('button[type="submit"]').disabled = false;
+                }
+            });
+
+            // --- Helper function to display messages ---
+            function showMessage(message, type) {
+                messageBox.innerText = message;
+                messageBox.classList.remove('success', 'error');
+                messageBox.classList.add(type);
+                messageBox.style.display = 'block';
+            }
+
+            // Initial fetch of subjects and topics when page loads
+            fetchSubjectsAndTopics();
+        });
+    </script>
+</body>
+</html>

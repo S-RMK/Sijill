@@ -11,3 +11,6 @@ npm-debug.log
 
 # Windows
 Thumbs.db
+
+# Firebase Admin SDK Key
+firebase-adminsdk.json
